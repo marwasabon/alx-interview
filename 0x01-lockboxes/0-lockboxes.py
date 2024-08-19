@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 """Python Script to determine if all the boxes can be opened
    in a list of lists
