@@ -3,11 +3,9 @@
    in a list of lists
 """
 
-
 def canUnlockAll(boxes):
     """ Function to determine if all the boxes can be opened
     """
-
     keys = [0]
     for key in keys:
         for boxKey in boxes[key]:
