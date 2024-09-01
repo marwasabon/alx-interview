@@ -1,54 +1,52 @@
+#!/usr/bin/python3  
 
-#!/usr/bin/python3
+"""Python Script that reads stdin line by line and computes metrics"""  
 
-"""python Script that reads stdin line by line and computes metrics"""
+import sys  
 
-import sys
+def display_stats(dic, size):  
+    """Display statistics"""  
+    print("File size: {:d}".format(size))  
+    for i in sorted(dic.keys()):  
+        if dic[i] != 0:  
+            print("{}: {:d}".format(i, dic[i]))  
 
+line_count = 0  
+total_size = 0  
 
-def display_stats(dic, size):
-    """ printing display_stats """
-    print("File size: {:d}".format(size))
-    for i in sorted(dic.keys()):
-        if dic[i] != 0:
-            print("{}: {:d}".format(i, dic[i]))
+status_codes = {  
+    "200": 0,   
+    "301": 0,   
+    "400": 0,   
+    "401": 0,   
+    "403": 0,  
+    "404": 0,   
+    "405": 0,   
+    "500": 0  
+}  
 
+try:  
+    for line in sys.stdin:  
+        if line_count != 0 and line_count % 10 == 0:  
+            display_stats(status_codes, total_size)  
 
-    line_count = 0  
-    total_size = 0  
+        stlist = line.split()  
+        line_count += 1  
 
-    status_codes = {  
-            "200": 0,   
-            "301": 0,   
-            "400": 0,   
-            "401": 0,   
-            "403": 0,  
-            "404": 0,   
-            "405": 0,   
-            "500": 0  
-    }  
+        try:  
+            total_size += int(stlist[-1])  
+        except (IndexError, ValueError):  
+            pass 
 
-    try:
-        for line in sys.stdin:
-            if line_count != 0 and line_count % 10 == 0:
-                display_stats(status_codes, total_size)
+        try:  
+            if stlist[-2] in status_codes:  
+                status_codes[stlist[-2]] += 1  
+        except IndexError:  
+            pass  
 
-            stlist = line.split()
-            line_count += 1
+    display_stats(status_codes, total_size)  
 
-            try:
-                total_size += int(stlist[-1])
-            except:
-                pass
-
-            try:
-                if stlist[-2] in status_codes:
-                    status_codes[stlist[-2]] += 1
-            except:
-                pass
-        display_stats(status_codes, total_size)
-
-
-    except KeyboardInterrupt:
-        display_stats(status_codes, total_size)
-        raise
+except KeyboardInterrupt:  
+    display_stats(status_codes, total_size)  
+except BrokenPipeError:  
+    display_stats(status_codes, total_size)
