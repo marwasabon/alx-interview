@@ -3,53 +3,53 @@
 """Write a script that reads stdin line by line and computes metrics"""
 
 import sys
- 
+import re
 
-def display_metrics(status_counts, total_size):  
-    """Displays the aggregated statistics."""  
-    print("File size: {}".format(total_size))  
-    for code in sorted(status_counts.keys()):  
-        if status_counts[code] > 0:  
-            print("{}: {}".format(code, status_counts[code]))  
 
-def main():  
-    line_count = 0  
-    total_size = 0  
+def print_stats(status_counts, total_size):
+    """Prints the collected statistics."""
+    print("File size: {:d}".format(total_size))
+    for status_code in sorted(status_counts.keys()):
+        if status_counts[status_code] > 0:
+            print("{}: {:d}".format(status_code, status_counts[status_code]))
 
-    status_codes = {  
-        "200": 0,   
-        "301": 0,   
-        "400": 0,   
-        "401": 0,   
-        "403": 0,  
-        "404": 0,   
-        "405": 0,   
-        "500": 0  
-    }  
+status_counts = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0
+}
 
-    try:  
-        for entry in sys.stdin:  
-            if line_count > 0 and line_count % 10 == 0:  
-                display_metrics(status_codes, total_size)  
+line_count = 0
+total_size = 0
 
-            parts = entry.split()  
-            line_count += 1  
+try:
+    for line in sys.stdin:
+        line_count += 1
+        
+        parts = line.split()
+        if len(parts) < 7:
+            continue
 
-            try:  
-                total_size += int(parts[-1])  
-            except (IndexError, ValueError):  
-                pass 
+        try:
+            file_size = int(parts[-1])
+            total_size += file_size
+        except ValueError:
+            continue
 
-            if len(parts) >= 2:  
-                status_code = parts[-2]  
-                if status_code in status_codes:  
-                    status_codes[status_code] += 1  
+        status_code = parts[-2]
+        if status_code in status_counts:
+            status_counts[status_code] += 1
 
-        display_metrics(status_codes, total_size)  
+        if line_count % 10 == 0:
+            print_stats(status_counts, total_size)
 
-    except KeyboardInterrupt:  
-        display_metrics(status_codes, total_size)  
-        raise  
+except KeyboardInterrupt:
+    print_stats(status_counts, total_size)
 
-if __name__ == "__main__":  
-    main()
+# Final print of statistics in case of termination
+print_stats(status_counts, total_size)
