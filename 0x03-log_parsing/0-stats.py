@@ -1,55 +1,54 @@
+
 #!/usr/bin/python3
 
-"""Write a script that reads stdin line by line and computes metrics"""
+"""python Script that reads stdin line by line and computes metrics"""
 
 import sys
-import re
 
 
-def print_stats(status_counts, total_size):
-    """Prints the collected statistics."""
-    print("File size: {:d}".format(total_size))
-    for status_code in sorted(status_counts.keys()):
-        if status_counts[status_code] > 0:
-            print("{}: {:d}".format(status_code, status_counts[status_code]))
+def display_stats(dic, size):
+    """ printing display_stats """
+    print("File size: {:d}".format(size))
+    for i in sorted(dic.keys()):
+        if dic[i] != 0:
+            print("{}: {:d}".format(i, dic[i]))
 
-status_counts = {
-    "200": 0,
-    "301": 0,
-    "400": 0,
-    "401": 0,
-    "403": 0,
-    "404": 0,
-    "405": 0,
-    "500": 0
-}
 
-line_count = 0
-total_size = 0
+line_count = 0  
+total_size = 0  
+
+status_codes = {  
+        "200": 0,   
+        "301": 0,   
+        "400": 0,   
+        "401": 0,   
+        "403": 0,  
+        "404": 0,   
+        "405": 0,   
+        "500": 0  
+}  
 
 try:
     for line in sys.stdin:
+        if line_count != 0 and line_count % 10 == 0:
+            display_stats(status_codes, total_size)
+
+        stlist = line.split()
         line_count += 1
-        
-        parts = line.split()
-        if len(parts) < 7:
-            continue
 
         try:
-            file_size = int(parts[-1])
-            total_size += file_size
-        except ValueError:
-            continue
+            total_size += int(stlist[-1])
+        except:
+            pass
 
-        status_code = parts[-2]
-        if status_code in status_counts:
-            status_counts[status_code] += 1
+        try:
+            if stlist[-2] in status_codes:
+                status_codes[stlist[-2]] += 1
+        except:
+            pass
+    display_stats(status_codes, total_size)
 
-        if line_count % 10 == 0:
-            print_stats(status_counts, total_size)
 
 except KeyboardInterrupt:
-    print_stats(status_counts, total_size)
-
-# Final print of statistics in case of termination
-print_stats(status_counts, total_size)
+    display_stats(status_codes, total_size)
+    raise
