@@ -35,18 +35,17 @@ try:
 
         try:  
             total_size += int(stlist[-1])  
-        except (IndexError, ValueError):  
+        except:
             pass 
 
         try:  
             if stlist[-2] in status_codes:  
                 status_codes[stlist[-2]] += 1  
-        except IndexError:  
+        except:
             pass  
 
     display_stats(status_codes, total_size)  
 
 except KeyboardInterrupt:  
-    display_stats(status_codes, total_size)  
-except BrokenPipeError:  
     display_stats(status_codes, total_size)
+    raise
