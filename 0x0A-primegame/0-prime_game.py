@@ -24,10 +24,11 @@ def isWinner(rounds, upper_limits):
     """
     Identify the winner of the Prime Game.
     """
-    if rounds is None or upper_limits is None
-    or rounds == 0 or not upper_limits:
+    if (rounds is None or
+            upper_limits is None or
+            rounds == 0 or
+            not upper_limits):
         return None
-
     score_maria, score_ben = 0, 0
 
     for i in range(rounds):
